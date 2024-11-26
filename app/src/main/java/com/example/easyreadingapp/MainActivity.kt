@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import com.example.easyreadingapp.ui.screens.ScaffolWrapper
 //import com.example.easyreadingapp.ui.screens.ImagenUrl
 import com.example.easyreadingapp.ui.theme.EasyReadingAppTheme
 
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EasyReadingAppTheme {
+                ScaffolWrapper()
             }
         }
     }
