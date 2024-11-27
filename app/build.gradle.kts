@@ -77,4 +77,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v250)
     //implementation "io.coil-kt:coil-gif:2.0.0"
     implementation(libs.coil.gif)
+
 }
