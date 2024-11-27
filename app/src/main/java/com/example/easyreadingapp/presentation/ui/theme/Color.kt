@@ -1,4 +1,4 @@
-package com.example.easyreadingapp.ui.theme
+package com.example.easyreadingapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
