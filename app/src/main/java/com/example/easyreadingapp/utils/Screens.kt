@@ -1,4 +1,4 @@
-package com.example.easyreadingapp.ui.utils
+package com.example.easyreadingapp.utils
 
 sealed class Screens(val route : String) {
     data object Home : Screens("home")
