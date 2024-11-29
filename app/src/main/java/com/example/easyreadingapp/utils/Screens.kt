@@ -1,9 +1,9 @@
-package com.example.easyreadingapp.ui.utils
+package com.example.easyreadingapp.utils
 
 sealed class Screens(val route : String) {
-    data object  Home : Screens("home")
-    data object  BookSearch : Screens("bookSearch")
-    data object  Contact : Screens("contact")
+    data object Home : Screens("home")
+    data object BookSearch : Screens("bookSearch")
+    data object Contact : Screens("contact")
     data object BookDetail : Screens("bookDetail")
     data object Login : Screens("login")
     data object Library : Screens("library")
