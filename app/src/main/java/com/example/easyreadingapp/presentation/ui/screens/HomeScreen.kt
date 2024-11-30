@@ -51,7 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun BookImage(imageUrl:String){
+fun BookImage(imageUrl:String, modifier: Modifier){
     Column {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -74,7 +74,7 @@ fun bookList(titulo:String, items:List<String>){
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow {
             items(items){ item ->
-                BookImage(imageUrl = item)
+                BookImage(imageUrl = item, modifier = Modifier)
             }
         }
     }

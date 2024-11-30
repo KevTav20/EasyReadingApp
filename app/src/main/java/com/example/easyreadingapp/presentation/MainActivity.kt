@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.presentation.ui.screens.BookImage
+import com.example.easyreadingapp.presentation.ui.screens.BooklistGrid
 import com.example.easyreadingapp.presentation.ui.screens.bookColumn
 import com.example.easyreadingapp.presentation.ui.screens.bookList
 import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
@@ -32,9 +33,9 @@ class MainActivity : ComponentActivity() {
                     ){
                         composable(route = Screens.Home.route){
 //                            HomeScreen(innerPadding = innerPadding, navController = navController)
-//                            var imagenes = listOf<String>("https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg")
-//                            bookList(titulo = "Hola", items = imagenes)
 
+
+                            // Ejemplos de uso para composables del HomeScreen
                             val bookData = listOf(
                                 "Libros de Fantasía" to listOf(
                                     "https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg",
@@ -76,6 +77,11 @@ class MainActivity : ComponentActivity() {
                             )
 
                             bookColumn(bookData = bookData)
+
+
+                            // Ejemplo de implementacion de la FavoriteSection
+//                            var imagenes = listOf<String>("https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg","https://m.media-amazon.com/images/I/81ySgYEwArL._AC_UF1000,1000_QL80_.jpg")
+//                            BooklistGrid(items = imagenes)
                         }
                     }
 
