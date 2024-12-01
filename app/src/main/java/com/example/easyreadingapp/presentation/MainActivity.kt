@@ -11,8 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.presentation.ui.screens.HomeScreen
+import com.example.easyreadingapp.presentation.ui.screens.LoginScreen
+import com.example.easyreadingapp.presentation.ui.screens.RegisterScreen
 import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
-import com.example.easyreadingapp.utils.Screens
+import com.example.easyreadingapp.presentation.ui.utils.Screens
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,8 +26,14 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home"
+                        startDestination = Screens.Login.route
                     ){
+                        composable(route = Screens.Login.route) {
+                            LoginScreen(innerPadding = innerPadding, navController = navController)
+                        }
+                        composable(route = Screens.Register.route) {
+                            RegisterScreen(innerPadding = innerPadding, navController = navController)
+                        }
                         composable(route = Screens.Home.route ){
                             HomeScreen(innerPadding = innerPadding, navController = navController)
                         }

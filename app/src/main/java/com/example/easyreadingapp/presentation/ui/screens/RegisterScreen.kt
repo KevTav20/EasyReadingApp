@@ -2,21 +2,16 @@ package com.example.easyreadingapp.presentation.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,15 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.R
 import com.example.easyreadingapp.datasources.services.AuthService
 import com.example.easyreadingapp.domain.dtos.AuthDto
-import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
-import com.example.easyreadingapp.presentation.ui.utils.Lock
+import com.example.easyreadingapp.domain.dtos.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,90 +39,108 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
+fun RegisterScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
+    var name by remember {
+        mutableStateOf("")
+    }
     var email by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
+    var confirmPassword by remember {
+        mutableStateOf("")
+    }
+    val  isButtonEnabled = email.isNotEmpty()
+            && password.isNotEmpty()
+            && confirmPassword.isNotEmpty()
+            && name.isNotEmpty()
+            && password == confirmPassword
     val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .padding(innerPadding)
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "TaskApp")
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "login",
+            contentDescription = "register",
             modifier = Modifier.size(250.dp)
         )
+        Spacer(modifier = Modifier.height(10.dp))
+        OutlinedTextField(
+            value = name,
+            onValueChange = {name = it},
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(text = "Nombre") },
+            shape = RoundedCornerShape(24.dp)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
             value = email,
             onValueChange = {email = it},
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
             placeholder = { Text(text = "Correo Electronico") },
-            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "email") }
+            shape = RoundedCornerShape(24.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {password = it},
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
             placeholder = { Text(text = "Contraseña") },
-            leadingIcon = { Icon(imageVector = Lock, contentDescription = "email") },
+            shape = RoundedCornerShape(24.dp),
             visualTransformation = PasswordVisualTransformation()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {confirmPassword = it},
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(text = "Confirmar Contraseña") },
+            shape = RoundedCornerShape(24.dp),
+            visualTransformation = PasswordVisualTransformation()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
             scope.launch(Dispatchers.IO) {
-                if(email.isNotEmpty() && password.isNotEmpty()){
+                try {
                     val authService = Retrofit.Builder()
                         .baseUrl("http://192.168.100.10:8000/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
                         .create((AuthService::class.java))
-                    val authDto = AuthDto(email = email, password = password)
-                    val response = authService.login(authDto)
-                    Log.i("LoginScreenAPI", response.toString())
-                    if(response.code() == 200){
-                        if (response.isSuccessful && response.body()?.isLogged == true){
-                            withContext(Dispatchers.Main){
-                                navController.navigate("home")
-                            }
+                    val authDto = User(name = name, email = email, password = password)
+                    val response = authService.registerUser(authDto)
+                    Log.i("RegisterScreenAPI", response.toString())
+                    if (response.isSuccessful && response.body()?.is_logged == true) {
+                        withContext(Dispatchers.Main) {
+                            navController.navigate("home")
                         }
+                    } else {
+                        Log.e("RegisterScreenAPI", "Error: ${response.code()} - ${response.message()}")
                     }
+                } catch (e: Exception) {
+                    Log.e("RegisterScreenAPI", "Exception: ${e.message}")
                 }
             }
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)) {
-            Text(text = "Iniciar sesion")
+        },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            enabled = isButtonEnabled
+        ) {
+            Text(text = "Registrarse")
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "No tienes una cuenta? Crea una",
-            color = Color.Gray,
-            modifier = Modifier.clickable {
-                navController.navigate("register")
-            })
-    }
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun LoginScreenPreview() {
-    val navController = rememberNavController()
-    EasyReadingAppTheme {
-        LoginScreen()
+        if (password != confirmPassword){
+            Text(
+                text = "Las contraseñas no coiciden",
+                color = Color.Red,
+                modifier = Modifier. padding(top = 10.dp)
+            )
+        }
     }
 }
