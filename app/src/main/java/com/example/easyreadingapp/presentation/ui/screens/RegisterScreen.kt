@@ -105,29 +105,34 @@ fun RegisterScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navControl
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = {
-            scope.launch(Dispatchers.IO) {
-                try {
-                    val authService = Retrofit.Builder()
-                        .baseUrl("http://192.168.100.10:8000/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create((AuthService::class.java))
-                    val authDto = User(name = name, email = email, password = password)
-                    val response = authService.registerUser(authDto)
-                    Log.i("RegisterScreenAPI", response.toString())
-                    if (response.isSuccessful && response.body()?.is_logged == true) {
-                        withContext(Dispatchers.Main) {
-                            navController.navigate("home")
+        Button(
+            onClick = {
+                scope.launch(Dispatchers.IO) {
+                    try {
+                        val authService = Retrofit.Builder()
+                            .baseUrl("http://192.168.100.10:8000/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                            .create(AuthService::class.java)
+                        val authDto = User(name = name, email = email, password = password)
+                        val response = authService.registerUser(authDto)
+
+                        Log.i("RegisterScreenAPI", "Respuesta del servidor: Código ${response.code()}")
+
+                        // Verifica si el código de respuesta es 200
+                        if (response.code() == 200) {
+                            withContext(Dispatchers.Main) {
+                                Log.i("RegisterScreenAPI", "Navegando a home")
+                                navController.navigate("home")
+                            }
+                        } else {
+                            Log.e("RegisterScreenAPI", "Error HTTP: ${response.code()} - ${response.message()}")
                         }
-                    } else {
-                        Log.e("RegisterScreenAPI", "Error: ${response.code()} - ${response.message()}")
+                    } catch (e: Exception) {
+                        Log.e("RegisterScreenAPI", "Excepción: ${e.message}")
                     }
-                } catch (e: Exception) {
-                    Log.e("RegisterScreenAPI", "Exception: ${e.message}")
                 }
-            }
-        },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp),

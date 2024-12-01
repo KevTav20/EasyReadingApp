@@ -47,13 +47,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
-    var email by remember {
-        mutableStateOf("")
-    }
-    var password by remember {
-        mutableStateOf("")
-    }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,63 +60,88 @@ fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "TaskApp")
+        Text(text = "Easy Reading App")
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "login",
             modifier = Modifier.size(250.dp)
         )
+
         OutlinedTextField(
             value = email,
-            onValueChange = {email = it},
+            onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            placeholder = { Text(text = "Correo Electronico") },
+            placeholder = { Text(text = "Correo Electrónico") },
             leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "email") }
         )
         Spacer(modifier = Modifier.height(10.dp))
+
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             placeholder = { Text(text = "Contraseña") },
-            leadingIcon = { Icon(imageVector = Lock, contentDescription = "email") },
+            leadingIcon = { Icon(imageVector = Lock, contentDescription = "password") },
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            scope.launch(Dispatchers.IO) {
-                if(email.isNotEmpty() && password.isNotEmpty()){
-                    val authService = Retrofit.Builder()
-                        .baseUrl("http://192.168.100.10:8000/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create((AuthService::class.java))
-                    val authDto = AuthDto(email = email, password = password)
-                    val response = authService.login(authDto)
-                    Log.i("LoginScreenAPI", response.toString())
-                    if(response.code() == 200){
-                        if (response.isSuccessful && response.body()?.isLogged == true){
-                            withContext(Dispatchers.Main){
-                                navController.navigate("home")
+
+        // Error message display
+        if (errorMessage.isNotEmpty()) {
+            Text(text = errorMessage, color = Color.Red)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Button(
+            onClick = {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    scope.launch {
+                        try {
+                            val authService = Retrofit.Builder()
+                                .baseUrl("http://192.168.100.10:8000/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build()
+                                .create(AuthService::class.java)
+
+                            val authDto = AuthDto(email = email, password = password)
+                            val response = authService.login(authDto)
+
+                            if (response.isSuccessful && response.body()?.isLogged == true) {
+                                withContext(Dispatchers.Main) {
+                                    navController.navigate("home")
+                                }
+                            } else {
+                                withContext(Dispatchers.Main) {
+                                    errorMessage = "Credenciales incorrectas. Intenta nuevamente."
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                errorMessage = "Hubo un error de conexión. Por favor intenta más tarde."
                             }
                         }
                     }
+                } else {
+                    errorMessage = "Por favor ingresa un correo y una contraseña."
                 }
-            }
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)) {
-            Text(text = "Iniciar sesion")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+        ) {
+            Text(text = "Iniciar sesión")
         }
+
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "No tienes una cuenta? Crea una",
             color = Color.Gray,
             modifier = Modifier.clickable {
                 navController.navigate("register")
-            })
+            }
+        )
     }
 }
 
@@ -130,6 +153,6 @@ fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController
 fun LoginScreenPreview() {
     val navController = rememberNavController()
     EasyReadingAppTheme {
-        LoginScreen()
+        LoginScreen(navController = navController)
     }
 }
