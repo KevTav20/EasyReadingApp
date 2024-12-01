@@ -4,3 +4,9 @@ EasyReading es una aplicación de libros digitales diseñada para facilitar el a
 
 ### Diseño en Figma
 ![Diseño App](https://i.imgur.com/dv26KWk.png)
+
+### Dependencias
+
+```bash
+    implementation(libs.coil.compose)
+```
