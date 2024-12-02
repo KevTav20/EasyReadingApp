@@ -8,12 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.easyreadingapp.domain.uses_cases.SharedPref
 import com.example.easyreadingapp.presentation.ui.screens.BookDetailScreen
 import com.example.easyreadingapp.presentation.ui.screens.HomeScreen
 import com.example.easyreadingapp.presentation.ui.screens.LoginScreen
@@ -28,10 +30,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             EasyReadingAppTheme {
                 val navController = rememberNavController()
+                val sharedPref = SharedPref(context = applicationContext) // Usa una única instancia
+
+                // Determinar el destino inicial
+                val startDestination = if (sharedPref.getIsLoggedSharedPref()) {
+                    Screens.Home.route
+                } else {
+                    Screens.Login.route
+                }
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screens.Login.route
+                        startDestination = startDestination // Usar destino inicial estático
                     ) {
                         composable(route = Screens.Login.route) {
                             LoginScreen(innerPadding = innerPadding, navController = navController)
@@ -57,3 +68,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

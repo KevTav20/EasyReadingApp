@@ -58,15 +58,6 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     val sharedPref = SharedPref(context = navController.context)
 
-    // Redirigir si ya está logueado
-    LaunchedEffect(Unit) {
-        if (sharedPref.getIsLoggedSharedPref()) {
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
-            }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
