@@ -1,5 +1,6 @@
 package com.example.easyreadingapp.presentation.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,23 +22,31 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.easyreadingapp.datasources.services.AuthService
 import com.example.easyreadingapp.datasources.services.BookService
+import com.example.easyreadingapp.domain.dtos.AuthDto
 import com.example.easyreadingapp.domain.dtos.Book
+import com.example.easyreadingapp.domain.uses_cases.SharedPref
 import com.example.easyreadingapp.presentation.components.LoadingScreen
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
-fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, bookId: Int) {
+fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, bookId: Int, userId: Int) {
     val scope = rememberCoroutineScope()
     var book by remember { mutableStateOf<Book?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val sharedPref = SharedPref(context = LocalContext.current)
+    val userId = sharedPref.getUserIdSharedPref() // Recuperar el ID del usuario desde SharedPreferences
 
     // Realizar la solicitud a la API
     LaunchedEffect(bookId) {
@@ -140,11 +149,59 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth()
             )
-//            Button(modifier = Modifier
-//            ) {
-//
-//            }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Botones
+            Button(
+                onClick = {
+                    scope.launch {
+                        try {
+                            val BASE_URL = "http://192.168.100.10:8000/"
+                            val bookService = Retrofit.Builder()
+                                .baseUrl(BASE_URL)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build()
+                                .create(BookService::class.java)
+
+                            // Agregar libro al usuario
+                            bookService.addBookToUser(userId, bookId)
+                            Log.d("BookDetailScreen", "Book successfully linked to user")
+                        } catch (e: Exception) {
+                            Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add to My Books")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        try {
+                            val BASE_URL = "http://192.168.100.10:8000/"
+                            val bookService = Retrofit.Builder()
+                                .baseUrl(BASE_URL)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build()
+                                .create(BookService::class.java)
+
+                            // Marcar como favorito
+                            bookService.addFavorite(userId, bookId)
+                            Log.d("BookDetailScreen", "Book marked as favorite")
+                        } catch (e: Exception) {
+                            Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Mark as Favorite")
+            }
         }
     } else {
         // Si no hay detalles del libro
@@ -155,3 +212,6 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
         )
     }
 }
+
+
+

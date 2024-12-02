@@ -47,9 +47,9 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("bookId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val bookId = backStackEntry.arguments?.getInt("bookId") ?: 0
-                            BookDetailScreen(innerPadding, navController, bookId)
+                            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+                            BookDetailScreen(innerPadding, navController, bookId, userId)
                             Log.d("NavHost", "Received bookId: $bookId")
-
                         }
                     }
                 }

@@ -32,8 +32,12 @@ fun BookCard(book: Book, navController: NavController) {
             .padding(8.dp)
             .width(150.dp)
             .clickable {
-                // Navegación al detalle del libro
-                navController.navigate(Screens.BookDetail.route.replace("{bookId}", book.id.toString()))
+                // Navegación al detalle del libro con el userId
+                navController.navigate(
+                    Screens.BookDetail.route
+                        .replace("{bookId}", book.id.toString())
+                        //.replace("{userId}", userId.toString())
+                )
             },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
@@ -66,4 +70,5 @@ fun BookCard(book: Book, navController: NavController) {
         }
     }
 }
+
 
