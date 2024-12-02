@@ -24,23 +24,21 @@ interface BookService {
     suspend fun getBookById(@Path("id") bookId: Int): Book
 
     @POST("user/{user_id}/books/{book_id}/link")
-    suspend fun addBookToUser2(@Body bookToUser: AddBook) : Response<AddBookResponse>
-
-    @POST("user/{user_id}/books/{book_id}/link")
     suspend fun addBookToUser(
-        @Query("user_id") userId: Int,
-        @Query("book_id") bookId: Int
-    )
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<AddBookResponse>
 
     @GET("user/{user_id}/books/")
     suspend fun getUserBooks(
-
-    )
+        @Path("user_id") userId: Int,
+        @Query("book_status") bookStatus: String
+    ): List<Book>
 
     @PATCH("user/{user_id}/books/{book_id}/favorite")
     suspend fun addFavorite(
         @Path("user_id") userId: Int,
         @Path("book_id") bookId: Int
-    )
-
+    ): Response<Unit>
 }
+

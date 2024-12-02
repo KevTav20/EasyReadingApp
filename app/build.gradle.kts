@@ -83,5 +83,9 @@ dependencies {
     implementation(libs.coil.gif)
     //implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.datastore.preferences)
+//    implementation 'com.canopas.compose-animated-navigationbar:bottombar:1.0.1'
+    implementation(libs.bottombar)
+    //implementation "com.google.dagger:hilt-android:2.48"
 
+    //kapt "com.google.dagger:hilt-compiler:2.48
 }

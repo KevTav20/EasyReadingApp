@@ -46,7 +46,10 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val sharedPref = SharedPref(context = LocalContext.current)
-    val userId = sharedPref.getUserIdSharedPref() // Recuperar el ID del usuario desde SharedPreferences
+    val retrievedUserId = sharedPref.getUserIdSharedPref() // Recuperar el ID del usuario desde SharedPreferences
+
+    // Log para verificar bookId y userId
+    Log.i("BookDetailScreen", "User ID: $retrievedUserId, Book ID: $bookId")
 
     // Realizar la solicitud a la API
     LaunchedEffect(bookId) {
@@ -165,7 +168,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                                 .create(BookService::class.java)
 
                             // Agregar libro al usuario
-                            bookService.addBookToUser(userId, bookId)
+                            bookService.addBookToUser(retrievedUserId, bookId)
                             Log.d("BookDetailScreen", "Book successfully linked to user")
                         } catch (e: Exception) {
                             Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
@@ -191,7 +194,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                                 .create(BookService::class.java)
 
                             // Marcar como favorito
-                            bookService.addFavorite(userId, bookId)
+                            bookService.addFavorite(retrievedUserId, bookId)
                             Log.d("BookDetailScreen", "Book marked as favorite")
                         } catch (e: Exception) {
                             Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
