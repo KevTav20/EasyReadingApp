@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,6 +77,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -138,6 +140,11 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth()
             )
+//            Button(modifier = Modifier
+//            ) {
+//
+//            }
+
         }
     } else {
         // Si no hay detalles del libro

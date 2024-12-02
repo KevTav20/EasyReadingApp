@@ -49,7 +49,8 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
 
                 // Obtener libros en secciones (paginados)
                 val booksPerSection = 5
-                val totalSections = 3
+                val totalSections = 4 // Ahora serán 4 secciones
+
                 val loadedBooks = mutableListOf<Book>()
                 for (i in 0 until totalSections) {
                     val skip = i * booksPerSection
@@ -84,7 +85,7 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
             }
             item {
                 LazyRow {
-                    items(allBooks.take(5)) { book ->
+                    items(allBooks.take(5)) { book -> // Primer conjunto de 5 libros
                         BookCard(book = book, navController = navController)
                     }
                 }
@@ -101,34 +102,49 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
             }
             item {
                 LazyRow {
-                    items(allBooks.take(5)) { book ->
+                    items(allBooks.drop(5).take(5)) { book -> // Segundo conjunto de 5 libros (del 6 al 10)
                         BookCard(book = book, navController = navController)
                     }
                 }
-
             }
 
             // Sección 3: Descubre más libros
-            if (allBooks.size > 10) {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Descubre más libros",
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(16.dp)
-                    )
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Descubre más libros",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            item {
+                LazyRow {
+                    items(allBooks.drop(10).take(5)) { book -> // Tercer conjunto de 5 libros (del 11 al 15)
+                        BookCard(book = book, navController = navController)
+                    }
                 }
-                item {
-                    LazyRow {
-                        items(allBooks.take(5)) { book ->
-                            BookCard(book = book, navController = navController)
-                        }
+            }
+
+            // Sección 4: Libros más populares
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Libros más populares",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            item {
+                LazyRow {
+                    items(allBooks.drop(15).take(5)) { book -> // Cuarto conjunto de 5 libros (del 16 al 20)
+                        BookCard(book = book, navController = navController)
                     }
                 }
             }
         }
     }
 }
+
 
 
 //@Composable
