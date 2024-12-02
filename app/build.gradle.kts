@@ -81,5 +81,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v250)
     //implementation "io.coil-kt:coil-gif:2.0.0"
     implementation(libs.coil.gif)
+    //implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
 
 }
