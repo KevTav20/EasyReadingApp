@@ -39,6 +39,21 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.easyreadingapp.R
+
 @Composable
 fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, bookId: Int, userId: Int) {
     val scope = rememberCoroutineScope()
@@ -219,5 +234,92 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
 
 // COMMMIT YEF
+
+
+@Composable
+fun BookDetail(
+    title: String,
+    author: String,
+    description: String,
+    review: String,
+    modifier: Modifier = Modifier // Agregar el modificador
+) {
+    Column(
+        modifier = modifier // Aplicar el modificador aquí
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Contenido de la pantalla
+        Image(
+            painter = painterResource(R.drawable.book_cover),
+            contentDescription = "Book Cover",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(150.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Text(
+            text = "by $author",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Gray,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
+
+        Text(
+            text = "Description",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre el texto y el botón
+
+        // Botón debajo de "Description"
+        Button(
+            onClick = { /* Acción del botón */ },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "Leer") // Texto del botón
+        }
+
+        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
+
+        Text(
+            text = "Review",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(
+                text = review,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+                color = Color.Black
+            )
+        }
+    }
+}
 
 
