@@ -108,9 +108,10 @@ fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController
                             val authDto = AuthDto(email = email, password = password)
                             val response = authService.login(authDto)
 
-                            if (response.isSuccessful && response.body()?.isLogged == true) {
+                            if (response.isSuccessful && response.code() == 200 && response.body()?.is_logged == true) {
+                                // Si la respuesta es exitosa (200) y el login es válido
                                 withContext(Dispatchers.Main) {
-                                    navController.navigate("home")
+                                    navController.navigate("home") // Navegar al Home
                                 }
                             } else {
                                 withContext(Dispatchers.Main) {
@@ -156,3 +157,4 @@ fun LoginScreenPreview() {
         LoginScreen(navController = navController)
     }
 }
+

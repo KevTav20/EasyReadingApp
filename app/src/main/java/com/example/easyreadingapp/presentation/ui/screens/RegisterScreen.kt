@@ -123,7 +123,7 @@ fun RegisterScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navControl
                         if (response.code() == 200) {
                             withContext(Dispatchers.Main) {
                                 Log.i("RegisterScreenAPI", "Navegando a home")
-                                navController.navigate("home")
+                                navController.navigate("login")
                             }
                         } else {
                             Log.e("RegisterScreenAPI", "Error HTTP: ${response.code()} - ${response.message()}")

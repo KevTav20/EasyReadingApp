@@ -13,6 +13,6 @@ interface AuthService {
     @POST("users/login")
     suspend fun login(@Body login: AuthDto) : Response<AuthResponse>
 
-    @POST("users/create")
+    @POST("users")
     suspend fun registerUser(@Body authDto: User) : Response<UserResponse>
 }
