@@ -7,5 +7,6 @@ data class Book(
     val year: String,
     val num_pages: Int,
     val category: String,
-    val image: String
+    val image: String,
+    val synopsis: String
 )

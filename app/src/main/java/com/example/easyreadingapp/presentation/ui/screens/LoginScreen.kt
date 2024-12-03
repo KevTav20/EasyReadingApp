@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +40,7 @@ import com.example.easyreadingapp.datasources.services.AuthService
 import com.example.easyreadingapp.domain.dtos.AuthDto
 import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
 import com.example.easyreadingapp.presentation.ui.utils.Lock
+import com.example.easyreadingapp.domain.uses_cases.SharedPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,11 +48,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
+fun LoginScreen(
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    navController: NavController = rememberNavController()
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    val sharedPref = SharedPref(context = navController.context)
 
     Column(
         modifier = Modifier
@@ -108,9 +114,12 @@ fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController
                             val authDto = AuthDto(email = email, password = password)
                             val response = authService.login(authDto)
 
-                            if (response.isSuccessful && response.body()?.isLogged == true) {
+                            if (response.isSuccessful && response.code() == 200 && response.body()?.is_logged == true) {
+                                val userId = response.body()?.id ?: 0 // Asume que tienes un campo user_id en la respuesta
+                                sharedPref.saveUserSharedPref(userId = userId, isLogged = true)
+
                                 withContext(Dispatchers.Main) {
-                                    navController.navigate("home")
+                                    navController.navigate("home") // Navegar al Home
                                 }
                             } else {
                                 withContext(Dispatchers.Main) {
@@ -144,6 +153,8 @@ fun LoginScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController
         )
     }
 }
+
+
 
 @Preview(
     showBackground = true,

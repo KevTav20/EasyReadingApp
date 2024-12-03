@@ -1,7 +1,7 @@
 package com.example.easyreadingapp.domain.dtos
 
 data class AuthResponse(
-    val userId : Int,
-    val isLogged : Boolean,
+    val id : Int,
+    val is_logged : Boolean,
     val message : String
 )

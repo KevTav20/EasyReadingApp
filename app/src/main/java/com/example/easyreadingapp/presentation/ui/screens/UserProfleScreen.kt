@@ -25,11 +25,13 @@ import androidx.compose.ui.draw.clip
 import com.example.easyreadingapp.R
 
 @Composable
-fun UserProfileScreen() {
+fun UserProfileScreen(innerPadding: PaddingValues, navController: NavController) {
     val activity = LocalContext.current as? Activity
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
