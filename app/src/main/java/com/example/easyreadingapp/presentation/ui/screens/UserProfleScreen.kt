@@ -87,6 +87,16 @@ fun UserProfileScreen() {
             icon = R.drawable.ic_launcher_foreground,
             onClick = { activity?.finish() } // Llama a finish() para cerrar la aplicación
         )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Rectángulo azul inferior
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(color = Color.Blue)
+        )
     }
 }
 
