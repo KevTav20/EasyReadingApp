@@ -55,7 +55,8 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
     LaunchedEffect(Unit) {
         scope.launch {
             try {
-                val BASE_URL = "http://192.168.100.12:8000/" // URL de la API
+                val BASE_URL = "143.244.179.13"
+//                val BASE_URL = "http://192.168.100.12:8000/" // URL de la API
                 val bookService = Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
