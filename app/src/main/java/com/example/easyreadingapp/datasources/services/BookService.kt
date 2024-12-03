@@ -46,5 +46,8 @@ interface BookService {
 
     @GET("books/category/{book_category}")
     suspend fun getBooksByCategory(@Path("book_category") bookCategory: String): List<Book>
+
+    @GET("books/categories")
+    suspend fun getCategories(): List<String>
 }
 

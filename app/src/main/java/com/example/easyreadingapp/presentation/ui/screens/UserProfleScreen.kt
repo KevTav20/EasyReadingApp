@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.R
 
 @Composable
-fun UserProfileScreen(innerPadding: PaddingValues, navController: NavController) {
+fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
     val activity = LocalContext.current as? Activity
 
     Column(
