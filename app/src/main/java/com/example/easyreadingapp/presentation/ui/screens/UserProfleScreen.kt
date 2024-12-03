@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.easyreadingapp.R
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun UserProfileScreen() {
@@ -27,28 +29,26 @@ fun UserProfileScreen() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Fondo azul en la mitad superior
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .background(color = Color.Blue)
         ) {
-            // Imagen circular de perfil
             Box(
                 modifier = Modifier
                     .size(120.dp)
                     .align(Alignment.BottomCenter)
-                    .offset(y = 60.dp)
-                    .background(color = Color.White, shape = CircleShape),
+                    .offset(y = 60.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile), // Cambia el recurso de imagen
+                    painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(110.dp)
+                        .clip(CircleShape) // Hace que la imagen sea redonda
                         .background(color = Color.Gray, shape = CircleShape)
                 )
             }
@@ -102,7 +102,7 @@ fun ButtonOption(text: String, color: Color, icon: Int) {
                 fontWeight = FontWeight.Bold
             )
             Image(
-                painter = painterResource(id = icon), // Cambia el ícono según sea necesario
+                painter = painterResource(id = icon),
                 contentDescription = "$text Icon",
                 modifier = Modifier.size(24.dp)
             )
