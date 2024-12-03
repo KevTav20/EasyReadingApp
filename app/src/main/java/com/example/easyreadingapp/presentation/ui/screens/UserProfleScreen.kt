@@ -29,12 +29,14 @@ fun UserProfileScreen() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Fondo azul en la mitad superior
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .background(color = Color.Blue)
         ) {
+            // Imagen circular de perfil
             Box(
                 modifier = Modifier
                     .size(120.dp)
@@ -43,7 +45,7 @@ fun UserProfileScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile),
+                    painter = painterResource(id = R.drawable.profile), // Cambia el recurso de imagen
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -70,11 +72,13 @@ fun UserProfileScreen() {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(40.dp)) // Más espacio antes de los botones
 
         // Botones de opciones
         ButtonOption("Configuración", Color.Blue, R.drawable.ic_launcher_foreground)
+        Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
         ButtonOption("Estadísticas", Color.Blue, R.drawable.ic_launcher_foreground)
+        Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
         ButtonOption("Cerrar Sesión", Color.Blue, R.drawable.ic_launcher_foreground)
     }
 }
