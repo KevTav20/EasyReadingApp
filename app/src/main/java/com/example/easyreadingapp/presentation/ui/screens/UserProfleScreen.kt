@@ -1,5 +1,6 @@
 package com.example.easyreadingapp.presentation.ui.screens
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,24 +13,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.easyreadingapp.R
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
+import com.example.easyreadingapp.R
 
 @Composable
 fun UserProfileScreen() {
+    val activity = LocalContext.current as? Activity
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Fondo azul en la mitad superior
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -45,7 +47,7 @@ fun UserProfileScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile), // Cambia el recurso de imagen
+                    painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -72,21 +74,26 @@ fun UserProfileScreen() {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(40.dp)) // Más espacio antes de los botones
+        Spacer(modifier = Modifier.height(30.dp))
 
         // Botones de opciones
-        ButtonOption("Configuración", Color.Blue, R.drawable.ic_launcher_foreground)
+        ButtonOption("Configuración", Color.Blue, R.drawable.ic_launcher_foreground, onClick = {})
         Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
-        ButtonOption("Estadísticas", Color.Blue, R.drawable.ic_launcher_foreground)
-        Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
-        ButtonOption("Cerrar Sesión", Color.Blue, R.drawable.ic_launcher_foreground)
+        ButtonOption("Estadísticas", Color.Blue, R.drawable.ic_launcher_foreground, onClick = {})
+        Spacer(modifier = Modifier.height(20.dp))
+        ButtonOption(
+            text = "Cerrar Sesión",
+            color = Color.Blue,
+            icon = R.drawable.ic_launcher_foreground,
+            onClick = { activity?.finish() } // Llama a finish() para cerrar la aplicación
+        )
     }
 }
 
 @Composable
-fun ButtonOption(text: String, color: Color, icon: Int) {
+fun ButtonOption(text: String, color: Color, icon: Int, onClick: () -> Unit) {
     Button(
-        onClick = { /* Acción para el botón */ },
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .height(50.dp)
