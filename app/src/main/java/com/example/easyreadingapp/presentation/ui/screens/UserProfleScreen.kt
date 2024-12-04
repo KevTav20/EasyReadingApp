@@ -84,7 +84,7 @@ fun UserProfileScreen(innerPadding: PaddingValues, navController: NavController)
         ButtonOption("Estadísticas", Color.Blue, R.drawable.ic_launcher_foreground, onClick = {})
         Spacer(modifier = Modifier.height(20.dp))
         ButtonOption(
-            text = "Cerrar Sesión",
+            text = "Cerrar Aplicación",
             color = Color.Blue,
             icon = R.drawable.ic_launcher_foreground,
             onClick = { activity?.finish() } // Llama a finish() para cerrar la aplicación
