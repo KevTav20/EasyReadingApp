@@ -1,5 +1,6 @@
 package com.example.easyreadingapp.presentation
 
+import UserProfileScreen
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -40,11 +41,12 @@ import com.example.easyreadingapp.domain.dtos.NavigationItem
 import com.example.easyreadingapp.domain.uses_cases.SharedPref
 import com.example.easyreadingapp.presentation.ui.screens.BookDetailScreen
 import com.example.easyreadingapp.presentation.ui.screens.BookSearchScreen
+
 import com.example.easyreadingapp.presentation.ui.screens.HomeScreen
 import com.example.easyreadingapp.presentation.ui.screens.LoginScreen
 import com.example.easyreadingapp.presentation.ui.screens.MyLibraryScreen
 import com.example.easyreadingapp.presentation.ui.screens.RegisterScreen
-import com.example.easyreadingapp.presentation.ui.screens.UserProfileScreen
+
 import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
 import com.example.easyreadingapp.presentation.ui.utils.Library
 import com.example.easyreadingapp.presentation.ui.utils.Screens

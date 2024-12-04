@@ -38,35 +38,27 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.easyreadingapp.R
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SnackbarDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, bookId: Int, userId: Int) {
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var book by remember { mutableStateOf<Book?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isBookAdded by remember { mutableStateOf(false) }
     val sharedPref = SharedPref(context = LocalContext.current)
-    val retrievedUserId = sharedPref.getUserIdSharedPref() // Recuperar el ID del usuario desde SharedPreferences
+    val retrievedUserId = sharedPref.getUserIdSharedPref()
 
-    // Log para verificar bookId y userId
     Log.i("BookDetailScreen", "User ID: $retrievedUserId, Book ID: $bookId")
 
-    // Realizar la solicitud a la API
     LaunchedEffect(bookId) {
         scope.launch {
             try {
@@ -79,6 +71,15 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
                 // Obtener detalles del libro
                 book = bookService.getBookById(bookId)
+
+                // Verificar si el libro ya está añadido
+                val isAddedResponse = bookService.isBookAddedToUser(retrievedUserId, bookId)
+                if (isAddedResponse.isSuccessful) {
+                    isBookAdded = isAddedResponse.body() ?: false
+                } else {
+                    errorMessage = "Failed to check book status: ${isAddedResponse.message()}"
+                }
+
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Failed to load book details: ${e.message}"
@@ -90,17 +91,14 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
     }
 
     if (isLoading) {
-        // Pantalla de carga
         LoadingScreen()
     } else if (errorMessage != null) {
-        // Pantalla de error
         Text(
             text = errorMessage ?: "An error occurred",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(16.dp)
         )
     } else if (book != null) {
-        // Mostrar detalles del libro
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -108,7 +106,6 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Imagen del libro
             AsyncImage(
                 model = book!!.image,
                 contentDescription = "Book Cover",
@@ -120,7 +117,6 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Título
             Text(
                 text = book!!.title,
                 style = MaterialTheme.typography.headlineSmall,
@@ -130,7 +126,6 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Autor
             Text(
                 text = "By ${book!!.author}",
                 style = MaterialTheme.typography.bodyMedium,
@@ -139,23 +134,12 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Categoría, Año y Número de Páginas
-            Text(
-                text = "Category: ${book!!.category}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Year: ${book!!.year}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Pages: ${book!!.num_pages}",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text(text = "Category: ${book!!.category}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "Year: ${book!!.year}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "Pages: ${book!!.num_pages}", style = MaterialTheme.typography.bodySmall)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sinopsis
             Text(
                 text = "Synopsis:",
                 style = MaterialTheme.typography.bodyMedium,
@@ -170,29 +154,31 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botones
             Button(
                 onClick = {
                     scope.launch {
                         try {
-                            val BASE_URL = "http://143.244.179.13/"
+                            val BASE_URL = "http://192.168.100.12:8000/"
                             val bookService = Retrofit.Builder()
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build()
                                 .create(BookService::class.java)
 
-                            // Agregar libro al usuario
                             bookService.addBookToUser(retrievedUserId, bookId)
+                            isBookAdded = true
+                            snackbarHostState.showSnackbar("Book successfully added to your list!")
                             Log.d("BookDetailScreen", "Book successfully linked to user")
                         } catch (e: Exception) {
+                            snackbarHostState.showSnackbar("Failed to add book: ${e.message}")
                             Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isBookAdded
             ) {
-                Text("Add to My Books")
+                Text(if (isBookAdded) "Already Added" else "Add to My Books")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -201,125 +187,40 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 onClick = {
                     scope.launch {
                         try {
-                            val BASE_URL = "http://143.244.179.13/"
+                            val BASE_URL = "http://192.168.100.12:8000/"
                             val bookService = Retrofit.Builder()
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build()
                                 .create(BookService::class.java)
 
-                            // Marcar como favorito
                             bookService.addFavorite(retrievedUserId, bookId)
+                            snackbarHostState.showSnackbar("Book marked as favorite!")
                             Log.d("BookDetailScreen", "Book marked as favorite")
                         } catch (e: Exception) {
+                            snackbarHostState.showSnackbar("Failed to mark as favorite: ${e.message}")
                             Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = isBookAdded
             ) {
                 Text("Mark as Favorite")
             }
         }
     } else {
-        // Si no hay detalles del libro
         Text(
             text = "Book not found",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(16.dp)
         )
     }
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = { Snackbar(it) },
+        modifier = Modifier.padding(16.dp)
+    )
 }
-
-
-
-// COMMMIT YEF
-
-
-@Composable
-fun BookDetail(
-    title: String,
-    author: String,
-    description: String,
-    review: String,
-    modifier: Modifier = Modifier // Agregar el modificador
-) {
-    Column(
-        modifier = modifier // Aplicar el modificador aquí
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Contenido de la pantalla
-        Image(
-            painter = painterResource(R.drawable.book_cover),
-            contentDescription = "Book Cover",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(150.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Text(
-            text = "by $author",
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
-
-        Text(
-            text = "Description",
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre el texto y el botón
-
-        // Botón debajo de "Description"
-        Button(
-            onClick = { /* Acción del botón */ },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text(text = "Leer") // Texto del botón
-        }
-
-        Spacer(modifier = Modifier.height(24.dp)) // Incremento del padding
-
-        Text(
-            text = "Review",
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = review,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp),
-                color = Color.Black
-            )
-        }
-    }
-}
-
 
