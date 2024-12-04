@@ -1,6 +1,5 @@
 [versions]
-agp = "8.7.2"
-androidPdfViewer = "3.2.0-beta.1"
+agp = "8.7.3"
 bottombar = "1.0.1"
 coilCompose = "2.7.0"
 coilGif = "2.1.0"
@@ -14,13 +13,12 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.04.01"
-navigationCompose = "2.8.3"
+composeBom = "2024.11.00"
+navigationCompose = "2.8.4"
 navigationComposeVersion = "2.5.0"
 retrofit = "2.9.0"
 
 [libraries]
-android-pdf-viewer = { module = "com.github.barteksc:android-pdf-viewer", version.ref = "androidPdfViewer" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-navigation-compose-v250 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
