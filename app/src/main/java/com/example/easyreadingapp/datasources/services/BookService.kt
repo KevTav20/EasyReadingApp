@@ -29,11 +29,13 @@ interface BookService {
         @Path("book_id") bookId: Int
     ): Response<AddBookResponse>
 
+
     @GET("user/{user_id}/books/")
     suspend fun getUserBooks(
         @Path("user_id") userId: Int,
-        @Query("book_status") bookStatus: String
+        @Query("status") bookStatus: String?
     ): List<Book>
+
 
     @PATCH("user/{user_id}/books/{book_id}/favorite")
     suspend fun addFavorite(
