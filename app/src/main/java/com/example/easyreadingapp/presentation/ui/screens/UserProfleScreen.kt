@@ -1,5 +1,3 @@
-package com.example.easyreadingapp.presentation.ui.screens
-
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,11 +6,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +25,9 @@ import androidx.compose.ui.draw.clip
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.R
+import com.example.easyreadingapp.presentation.ui.utils.Settings
+import com.example.easyreadingapp.presentation.ui.utils.Exit_to_app
+import com.example.easyreadingapp.presentation.ui.utils.GraphUpArrow
 
 @Composable
 fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
@@ -82,24 +85,23 @@ fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navCont
         Spacer(modifier = Modifier.height(30.dp))
 
         // Botones de opciones
-        ButtonOption("Configuración", customColor, R.drawable.ic_launcher_foreground, onClick = {})
+        ButtonOption("Configuración", customColor, icon = Settings, onClick = {})
         Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
-        ButtonOption("Estadísticas", customColor, R.drawable.ic_launcher_foreground, onClick = {})
+        ButtonOption("Estadísticas", customColor, icon = GraphUpArrow , onClick = {})
         Spacer(modifier = Modifier.height(20.dp))
         ButtonOption(
             text = "Cerrar Aplicación",
             color = customColor,
-            icon = R.drawable.ic_launcher_foreground,
+            icon = Exit_to_app,
             onClick = { activity?.finish() } // Llama a finish() para cerrar la aplicación
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
     }
 }
 
 @Composable
-fun ButtonOption(text: String, color: Color, icon: Int, onClick: () -> Unit) {
+fun ButtonOption(text: String, color: Color, icon: ImageVector, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -120,10 +122,11 @@ fun ButtonOption(text: String, color: Color, icon: Int, onClick: () -> Unit) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
-            Image(
-                painter = painterResource(id = icon),
+            Icon(
+                imageVector = icon,
                 contentDescription = "$text Icon",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                tint = Color.White
             )
         }
     }
