@@ -14,7 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,43 +31,73 @@ fun ReadBook(book: Book) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .width(150.dp)
+            .width(180.dp)
             .clickable {
-//                // Navegación al detalle del libro con el userId
-//                navController.navigate(
-//                    Screens.BookDetail.route
-//                        .replace("{bookId}", book.id.toString())
-//                    //.replace("{userId}", userId.toString())
-//                )
+                // Navegación al detalle del libro con el bookId
+                // navController.navigate(
+                //     Screens.BookDetail.route
+                //         .replace("{bookId}", book.id.toString())
+                // )
             },
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        shape = MaterialTheme.shapes.medium, // Bordes redondeados
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant, // Fondo más sólido
         )
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .placeholder(R.drawable.god_of_war)
-                    .data(book.image)
-                    .build(),
-                contentDescription = book.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        ) {
+            // Marco para la portada del libro
+            Card(
+                shape = MaterialTheme.shapes.medium,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface // Fondo de la portada
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .placeholder(R.drawable.god_of_war) // Cambiar por un ícono más adecuado
+                        .data(book.image)
+                        .build(),
+                    contentDescription = book.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.75f)
+                        .clip(MaterialTheme.shapes.medium) // Bordes redondeados en la imagen
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = book.title,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.primary, // Color destacado para el título
+                    fontWeight = FontWeight.Bold, // Título más destacado
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize * 1.2f // Aumentar tamaño
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = book.author,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant // Color más suave para el autor
+                ),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }
 }
+
+
+

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -36,7 +37,7 @@ import retrofit2.Response
 fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
     val scope = rememberCoroutineScope()
     val sharedPref = SharedPref(context = LocalContext.current)
-    val userId = sharedPref.getUserIdSharedPref() // Obtener el ID del usuario desde SharedPreferences
+    val userId = sharedPref.getUserIdSharedPref()
 
     var favoriteBooks by remember { mutableStateOf<List<Book>>(emptyList()) }
     var nonFavoriteBooks by remember { mutableStateOf<List<Book>>(emptyList()) }
@@ -56,9 +57,11 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
     LaunchedEffect(Unit) {
         scope.launch {
             try {
-                val fetchedFavoriteBooks = bookService.getUserBooks(userId, "favorite")
+                val (fetchedFavoriteBooks, fetchedNonFavoriteBooks) = listOf(
+                    bookService.getUserBooks(userId, "favorite"),
+                    bookService.getUserBooks(userId, "no favorite")
+                )
                 favoriteBooks = fetchedFavoriteBooks
-                val fetchedNonFavoriteBooks = bookService.getUserBooks(userId, "no favorite")
                 nonFavoriteBooks = fetchedNonFavoriteBooks
             } catch (e: Exception) {
                 Log.e("MyLibraryScreen", "Error fetching books: ${e.message}")
@@ -68,10 +71,12 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
         }
     }
 
+    // Fondo estilizado
     Surface(
         modifier = Modifier
             .padding(innerPadding)
-            .fillMaxSize()
+            .fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         if (isLoading) {
             LoadingScreen()
@@ -79,23 +84,26 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Columna de libros favoritos
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight()
-                        .padding(end = 8.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "Libros Favoritos",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        color = MaterialTheme.colorScheme.primary
                     )
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(favoriteBooks) { book ->
                             ReadBook(book)
@@ -107,17 +115,19 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight()
-                        .padding(start = 8.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "Otros Libros",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(nonFavoriteBooks) { book ->
                             ReadBook(book)
@@ -128,4 +138,5 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
         }
     }
 }
+
 
