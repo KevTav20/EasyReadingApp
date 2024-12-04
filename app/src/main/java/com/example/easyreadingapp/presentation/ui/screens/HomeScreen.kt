@@ -55,7 +55,8 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
     LaunchedEffect(Unit) {
         scope.launch {
             try {
-                val BASE_URL = "http://192.168.100.10:8000/" // URL de la API
+                val BASE_URL = "http://143.244.179.13/"
+//                val BASE_URL = "http://192.168.100.12:8000/" // URL de la API
                 val bookService = Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -91,14 +92,15 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
             // Encabezado con el botón de cerrar sesión
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(Color.White),
                 horizontalArrangement = Arrangement.End // Alineamos el botón a la derecha
             ) {
                 Button(
                     onClick = { logout() },
                     modifier = Modifier.padding(16.dp) // Añadimos un padding alrededor del botón
                 ) {
-                    Text("Cerrar sesión")
+                    Text("Cerrar sesión", color = Color.White)
                 }
             }
 
@@ -111,12 +113,15 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
                 item {
                     Text(
                         text = "Libros que te pueden gustar",
-                        style = MaterialTheme.typography.displayLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
                 item {
-                    LazyRow {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(8.dp)
+                    ){
                         items(allBooks.take(5)) { book -> // Primer conjunto de 5 libros
                             BookCard(book = book, navController = navController)
                         }
@@ -133,7 +138,10 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
                     )
                 }
                 item {
-                    LazyRow {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
                         items(allBooks.drop(5).take(5)) { book -> // Segundo conjunto de 5 libros
                             BookCard(book = book, navController = navController)
                         }
@@ -150,7 +158,10 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
                     )
                 }
                 item {
-                    LazyRow {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
                         items(allBooks.drop(10).take(5)) { book -> // Tercer conjunto de 5 libros
                             BookCard(book = book, navController = navController)
                         }
@@ -167,7 +178,10 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
                     )
                 }
                 item {
-                    LazyRow {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(8.dp)
+                    ) {
                         items(allBooks.drop(15).take(5)) { book -> // Cuarto conjunto de 5 libros
                             BookCard(book = book, navController = navController)
                         }
