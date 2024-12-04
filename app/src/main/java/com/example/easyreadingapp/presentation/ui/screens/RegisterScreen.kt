@@ -110,7 +110,7 @@ fun RegisterScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navControl
                 scope.launch(Dispatchers.IO) {
                     try {
                         val authService = Retrofit.Builder()
-                            .baseUrl("http://143.244.179.13/")
+                            .baseUrl("http://192.168.100.12:8000/")
                             .addConverterFactory(GsonConverterFactory.create())
                             .build()
                             .create(AuthService::class.java)

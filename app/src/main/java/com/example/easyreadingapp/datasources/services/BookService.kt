@@ -36,6 +36,12 @@ interface BookService {
         @Query("status") bookStatus: String?
     ): List<Book>
 
+    @GET("users/{user_id}/books/{book_id}/exists")
+    suspend fun isBookAddedToUser(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<Boolean>
+
 
     @PATCH("user/{user_id}/books/{book_id}/favorite")
     suspend fun addFavorite(
