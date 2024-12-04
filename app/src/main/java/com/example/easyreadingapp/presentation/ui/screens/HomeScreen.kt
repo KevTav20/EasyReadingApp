@@ -92,14 +92,15 @@ fun HomeScreen(innerPadding: PaddingValues, navController: NavController) {
             // Encabezado con el botón de cerrar sesión
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(Color.White),
                 horizontalArrangement = Arrangement.End // Alineamos el botón a la derecha
             ) {
                 Button(
                     onClick = { logout() },
                     modifier = Modifier.padding(16.dp) // Añadimos un padding alrededor del botón
                 ) {
-                    Text("Cerrar sesión")
+                    Text("Cerrar sesión", color = Color.White)
                 }
             }
 
