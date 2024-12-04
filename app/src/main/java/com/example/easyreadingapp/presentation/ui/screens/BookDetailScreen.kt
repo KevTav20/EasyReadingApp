@@ -53,12 +53,13 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
     var book by remember { mutableStateOf<Book?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isBookAdded by remember { mutableStateOf(false) }
+    var isBookAdded by remember { mutableStateOf<Boolean?>(null) } // null: no comprobado aún
     val sharedPref = SharedPref(context = LocalContext.current)
     val retrievedUserId = sharedPref.getUserIdSharedPref()
 
     Log.i("BookDetailScreen", "User ID: $retrievedUserId, Book ID: $bookId")
 
+    // Cargar los detalles del libro
     LaunchedEffect(bookId) {
         scope.launch {
             try {
@@ -69,17 +70,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                     .build()
                     .create(BookService::class.java)
 
-                // Obtener detalles del libro
                 book = bookService.getBookById(bookId)
-
-                // Verificar si el libro ya está añadido
-                val isAddedResponse = bookService.isBookAddedToUser(retrievedUserId, bookId)
-                if (isAddedResponse.isSuccessful) {
-                    isBookAdded = isAddedResponse.body() ?: false
-                } else {
-                    errorMessage = "Failed to check book status: ${isAddedResponse.message()}"
-                }
-
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Failed to load book details: ${e.message}"
@@ -106,6 +97,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+            // Mostrar información del libro
             AsyncImage(
                 model = book!!.image,
                 contentDescription = "Book Cover",
@@ -154,59 +146,89 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    scope.launch {
-                        try {
-                            val BASE_URL = "http://192.168.100.12:8000/"
-                            val bookService = Retrofit.Builder()
-                                .baseUrl(BASE_URL)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(BookService::class.java)
+            // Botón para verificar si el libro pertenece al usuario
+            if (isBookAdded == null) {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            try {
+                                val BASE_URL = "http://192.168.100.12:8000/"
+                                val bookService = Retrofit.Builder()
+                                    .baseUrl(BASE_URL)
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build()
+                                    .create(BookService::class.java)
 
-                            bookService.addBookToUser(retrievedUserId, bookId)
-                            isBookAdded = true
-                            snackbarHostState.showSnackbar("Book successfully added to your list!")
-                            Log.d("BookDetailScreen", "Book successfully linked to user")
-                        } catch (e: Exception) {
-                            snackbarHostState.showSnackbar("Failed to add book: ${e.message}")
-                            Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
+                                val response = bookService.isBookLinkedToUser(retrievedUserId, bookId)
+                                if (response.isSuccessful) {
+                                    isBookAdded = response.body()?.exists ?: false
+                                } else {
+                                    snackbarHostState.showSnackbar("Failed to verify book: ${response.code()}")
+                                }
+                            } catch (e: Exception) {
+                                snackbarHostState.showSnackbar("Error: ${e.message}")
+                                Log.e("BookDetailScreen", "Error verifying book: ${e.message}")
+                            }
                         }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Check Availability")
+                }
+            } else {
+                // Mostrar botones según el estado
+                if (!isBookAdded!!) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                try {
+                                    val BASE_URL = "http://192.168.100.12:8000/"
+                                    val bookService = Retrofit.Builder()
+                                        .baseUrl(BASE_URL)
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .build()
+                                        .create(BookService::class.java)
+
+                                    bookService.addBookToUser(retrievedUserId, bookId)
+                                    isBookAdded = true
+                                    snackbarHostState.showSnackbar("Book successfully added to your list!")
+                                    Log.d("BookDetailScreen", "Book successfully linked to user")
+                                } catch (e: Exception) {
+                                    snackbarHostState.showSnackbar("Failed to add book: ${e.message}")
+                                    Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Add to My Books")
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isBookAdded
-            ) {
-                Text(if (isBookAdded) "Already Added" else "Add to My Books")
-            }
+                } else {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                try {
+                                    val BASE_URL = "http://192.168.100.12:8000/"
+                                    val bookService = Retrofit.Builder()
+                                        .baseUrl(BASE_URL)
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .build()
+                                        .create(BookService::class.java)
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    scope.launch {
-                        try {
-                            val BASE_URL = "http://192.168.100.12:8000/"
-                            val bookService = Retrofit.Builder()
-                                .baseUrl(BASE_URL)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(BookService::class.java)
-
-                            bookService.addFavorite(retrievedUserId, bookId)
-                            snackbarHostState.showSnackbar("Book marked as favorite!")
-                            Log.d("BookDetailScreen", "Book marked as favorite")
-                        } catch (e: Exception) {
-                            snackbarHostState.showSnackbar("Failed to mark as favorite: ${e.message}")
-                            Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
-                        }
+                                    bookService.addFavorite(retrievedUserId, bookId)
+                                    snackbarHostState.showSnackbar("Book marked as favorite!")
+                                    Log.d("BookDetailScreen", "Book marked as favorite")
+                                } catch (e: Exception) {
+                                    snackbarHostState.showSnackbar("Failed to mark as favorite: ${e.message}")
+                                    Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Mark as Favorite")
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = isBookAdded
-            ) {
-                Text("Mark as Favorite")
+                }
             }
         }
     } else {
@@ -217,10 +239,13 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
         )
     }
 
+    // SnackbarHost para mostrar mensajes
     SnackbarHost(
         hostState = snackbarHostState,
         snackbar = { Snackbar(it) },
         modifier = Modifier.padding(16.dp)
     )
 }
+
+
 
