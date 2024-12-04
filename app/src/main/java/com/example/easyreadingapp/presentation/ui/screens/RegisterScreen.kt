@@ -1,6 +1,7 @@
 package com.example.easyreadingapp.presentation.ui.screens
 
 import android.util.Log
+import androidx.annotation.Nullable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -114,7 +115,7 @@ fun RegisterScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navControl
                             .addConverterFactory(GsonConverterFactory.create())
                             .build()
                             .create(AuthService::class.java)
-                        val authDto = User(name = name, email = email, password = password)
+                        val authDto = User(name = name, email = email, password = password, image = "")
                         val response = authService.registerUser(authDto)
 
                         Log.i("RegisterScreenAPI", "Respuesta del servidor: Código ${response.code()}")
