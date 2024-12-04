@@ -45,7 +45,7 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
     // Configuración de Retrofit
     val retrofit = remember {
         Retrofit.Builder()
-            .baseUrl("http://192.168.100.12:8000/")  // Cambia esto a tu base URL
+            .baseUrl("http://143.244.179.13/")  // Cambia esto a tu base URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BookService::class.java)
