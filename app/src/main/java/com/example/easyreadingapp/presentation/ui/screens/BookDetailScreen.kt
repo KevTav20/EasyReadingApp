@@ -70,7 +70,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
     LaunchedEffect(bookId) {
         scope.launch {
             try {
-                val BASE_URL = "http://192.168.100.10:8000/"
+                val BASE_URL = "http://192.168.100.12:8000/"
                 val bookService = Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -175,7 +175,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 onClick = {
                     scope.launch {
                         try {
-                            val BASE_URL = "http://192.168.100.10:8000/"
+                            val BASE_URL = "http://192.168.100.12:8000/"
                             val bookService = Retrofit.Builder()
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
@@ -201,7 +201,7 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
                 onClick = {
                     scope.launch {
                         try {
-                            val BASE_URL = "http://192.168.100.10:8000/"
+                            val BASE_URL = "http://192.168.100.12:8000/"
                             val bookService = Retrofit.Builder()
                                 .baseUrl(BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())

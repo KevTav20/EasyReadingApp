@@ -40,5 +40,14 @@ interface BookService {
         @Path("user_id") userId: Int,
         @Path("book_id") bookId: Int
     ): Response<Unit>
+
+    @GET("books/search/{book_name}")
+    suspend fun searchBooksByName(@Path("book_name") bookName: String): List<Book>
+
+    @GET("books/category/{book_category}")
+    suspend fun getBooksByCategory(@Path("book_category") bookCategory: String): List<Book>
+
+    @GET("books/categories")
+    suspend fun getCategories(): List<String>
 }
 
