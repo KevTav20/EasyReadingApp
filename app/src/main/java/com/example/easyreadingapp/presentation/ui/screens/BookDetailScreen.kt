@@ -53,23 +53,32 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
     var book by remember { mutableStateOf<Book?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isBookAdded by remember { mutableStateOf<Boolean?>(null) } // null: no comprobado aún
+    var isBookAdded by remember { mutableStateOf<Boolean?>(null) }
+    var isFavorite by remember { mutableStateOf<Boolean?>(null) }
     val sharedPref = SharedPref(context = LocalContext.current)
     val retrievedUserId = sharedPref.getUserIdSharedPref()
 
-    Log.i("BookDetailScreen", "User ID: $retrievedUserId, Book ID: $bookId")
-
-    // Cargar los detalles del libro
     LaunchedEffect(bookId) {
         scope.launch {
             try {
-                val BASE_URL = "http://192.168.100.12:8000/"
+                val BASE_URL = "http://10.166.125.88:8000/"
                 val bookService = Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(BookService::class.java)
 
+                // Verificar si el libro está agregado y su estado de favorito
+                val response = bookService.isBookLinkedToUser(retrievedUserId, bookId)
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    isBookAdded = result?.exists
+                    isFavorite = result?.is_favorite
+                } else {
+                    snackbarHostState.showSnackbar("Failed to verify book: ${response.code()}")
+                }
+
+                // Cargar detalles del libro
                 book = bookService.getBookById(bookId)
                 errorMessage = null
             } catch (e: Exception) {
@@ -146,81 +155,88 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón para verificar si el libro pertenece al usuario
-            if (isBookAdded == null) {
+            // Mostrar botón "Add to My Books" si el libro no está añadido
+            if (isBookAdded == false) {
                 Button(
                     onClick = {
                         scope.launch {
                             try {
-                                val BASE_URL = "http://192.168.100.12:8000/"
+                                val BASE_URL = "http://10.166.125.88:8000/"
                                 val bookService = Retrofit.Builder()
                                     .baseUrl(BASE_URL)
                                     .addConverterFactory(GsonConverterFactory.create())
                                     .build()
                                     .create(BookService::class.java)
 
-                                val response = bookService.isBookLinkedToUser(retrievedUserId, bookId)
+                                val response = bookService.addBookToUser(retrievedUserId, bookId)
                                 if (response.isSuccessful) {
-                                    isBookAdded = response.body()?.exists ?: false
+                                    isBookAdded = true
+                                    snackbarHostState.showSnackbar("Book added to your list!")
                                 } else {
-                                    snackbarHostState.showSnackbar("Failed to verify book: ${response.code()}")
+                                    snackbarHostState.showSnackbar("Failed to add book: ${response.code()}")
                                 }
                             } catch (e: Exception) {
                                 snackbarHostState.showSnackbar("Error: ${e.message}")
-                                Log.e("BookDetailScreen", "Error verifying book: ${e.message}")
                             }
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Check Availability")
+                    Text("Add to My Books")
                 }
-            } else {
-                // Mostrar botones según el estado
-                if (!isBookAdded!!) {
+            }
+
+            // Mostrar botones de favoritos si el libro está añadido
+            if (isBookAdded == true) {
+                if (isFavorite == true) {
                     Button(
                         onClick = {
                             scope.launch {
                                 try {
-                                    val BASE_URL = "http://192.168.100.12:8000/"
+                                    val BASE_URL = "http://10.166.125.88:8000/"
                                     val bookService = Retrofit.Builder()
                                         .baseUrl(BASE_URL)
                                         .addConverterFactory(GsonConverterFactory.create())
                                         .build()
                                         .create(BookService::class.java)
 
-                                    bookService.addBookToUser(retrievedUserId, bookId)
-                                    isBookAdded = true
-                                    snackbarHostState.showSnackbar("Book successfully added to your list!")
-                                    Log.d("BookDetailScreen", "Book successfully linked to user")
+                                    val response = bookService.removeFavorite(retrievedUserId, bookId)
+                                    if (response.isSuccessful) {
+                                        isFavorite = false
+                                        snackbarHostState.showSnackbar("Book unmarked as favorite!")
+                                    } else {
+                                        snackbarHostState.showSnackbar("Failed to unmark as favorite: ${response.code()}")
+                                    }
                                 } catch (e: Exception) {
-                                    snackbarHostState.showSnackbar("Failed to add book: ${e.message}")
-                                    Log.e("BookDetailScreen", "Failed to link book to user: ${e.message}")
+                                    snackbarHostState.showSnackbar("Error: ${e.message}")
                                 }
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Add to My Books")
+                        Text("Unmark as Favorite")
                     }
-                } else {
+                } else if (isFavorite == false) {
                     Button(
                         onClick = {
                             scope.launch {
                                 try {
-                                    val BASE_URL = "http://192.168.100.12:8000/"
+                                    val BASE_URL = "http://10.166.125.88:8000/"
                                     val bookService = Retrofit.Builder()
                                         .baseUrl(BASE_URL)
                                         .addConverterFactory(GsonConverterFactory.create())
                                         .build()
                                         .create(BookService::class.java)
 
-                                    bookService.addFavorite(retrievedUserId, bookId)
-                                    snackbarHostState.showSnackbar("Book marked as favorite!")
-                                    Log.d("BookDetailScreen", "Book marked as favorite")
+                                    val response = bookService.addFavorite(retrievedUserId, bookId)
+                                    if (response.isSuccessful) {
+                                        isFavorite = true
+                                        snackbarHostState.showSnackbar("Book marked as favorite!")
+                                    } else {
+                                        snackbarHostState.showSnackbar("Failed to mark as favorite: ${response.code()}")
+                                    }
                                 } catch (e: Exception) {
-                                    snackbarHostState.showSnackbar("Failed to mark as favorite: ${e.message}")
-                                    Log.e("BookDetailScreen", "Failed to mark book as favorite: ${e.message}")
+                                    snackbarHostState.showSnackbar("Error: ${e.message}")
                                 }
                             }
                         },
@@ -239,13 +255,13 @@ fun BookDetailScreen(innerPadding: PaddingValues, navController: NavController, 
         )
     }
 
-    // SnackbarHost para mostrar mensajes
     SnackbarHost(
         hostState = snackbarHostState,
         snackbar = { Snackbar(it) },
         modifier = Modifier.padding(16.dp)
     )
 }
+
 
 
 

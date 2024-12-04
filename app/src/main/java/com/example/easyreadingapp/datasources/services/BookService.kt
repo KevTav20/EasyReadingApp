@@ -43,12 +43,6 @@ interface BookService {
         @Query("status") bookStatus: String?
     ): List<Book>
 
-    @PATCH("user/{user_id}/books/{book_id}/favorite")
-    suspend fun addFavorite(
-        @Path("user_id") userId: Int,
-        @Path("book_id") bookId: Int
-    ): Response<Unit>
-
     @GET("books/search/{book_name}")
     suspend fun searchBooksByName(@Path("book_name") bookName: String): List<Book>
 
@@ -63,6 +57,18 @@ interface BookService {
         @Path("user_id") userId: Int,
         @Path("book_id") bookId: Int
     ): Response<ExistsResponse>
+
+    @PATCH("user/{user_id}/books/{book_id}/favorite")
+    suspend fun addFavorite(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<Unit>
+
+    @PATCH("user/{user_id}/books/{book_id}/unfavorite")
+    suspend fun removeFavorite(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<Unit>
 
 }
 

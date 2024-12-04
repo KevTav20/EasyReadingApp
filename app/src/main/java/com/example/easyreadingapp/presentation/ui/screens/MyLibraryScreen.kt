@@ -44,7 +44,7 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
     var isLoading by remember { mutableStateOf(true) }
 
     // Retrofit setup
-    val BASE_URL = "http://192.168.100.12:8000/"
+    val BASE_URL = "http://10.166.125.88:8000/"
     val bookService = remember {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

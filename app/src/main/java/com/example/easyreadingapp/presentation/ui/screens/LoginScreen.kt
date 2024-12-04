@@ -106,7 +106,7 @@ fun LoginScreen(
                     scope.launch {
                         try {
                             val authService = Retrofit.Builder()
-                                .baseUrl("http://192.168.100.12:8000/")
+                                .baseUrl("http://10.166.125.88:8000/")
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build()
                                 .create(AuthService::class.java)
