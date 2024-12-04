@@ -23,23 +23,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.easyreadingapp.R
 
 @Composable
-fun UserProfileScreen(innerPadding: PaddingValues, navController: NavController) {
+fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navController: NavController = rememberNavController()) {
     val activity = LocalContext.current as? Activity
+    val customColor = Color(0xFF4175E1) // Color personalizado
 
     Column(
         modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPadding),
+            .fillMaxSize()
+            .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .background(color = Color.Blue)
+                .background(color = customColor) // Aplicar color personalizado
         ) {
             // Imagen circular de perfil
             Box(
@@ -80,26 +82,19 @@ fun UserProfileScreen(innerPadding: PaddingValues, navController: NavController)
         Spacer(modifier = Modifier.height(30.dp))
 
         // Botones de opciones
-        ButtonOption("Configuración", Color.Blue, R.drawable.ic_launcher_foreground, onClick = {})
+        ButtonOption("Configuración", customColor, R.drawable.ic_launcher_foreground, onClick = {})
         Spacer(modifier = Modifier.height(20.dp)) // Espaciado entre botones
-        ButtonOption("Estadísticas", Color.Blue, R.drawable.ic_launcher_foreground, onClick = {})
+        ButtonOption("Estadísticas", customColor, R.drawable.ic_launcher_foreground, onClick = {})
         Spacer(modifier = Modifier.height(20.dp))
         ButtonOption(
             text = "Cerrar Aplicación",
-            color = Color.Blue,
+            color = customColor,
             icon = R.drawable.ic_launcher_foreground,
             onClick = { activity?.finish() } // Llama a finish() para cerrar la aplicación
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Rectángulo azul inferior
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .background(color = Color.Blue)
-        )
     }
 }
 
