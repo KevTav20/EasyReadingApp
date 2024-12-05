@@ -8,5 +8,6 @@ data class Book(
     val num_pages: Int,
     val category: String,
     val image: String,
-    val synopsis: String
+    val synopsis: String,
+    val url: String
 )

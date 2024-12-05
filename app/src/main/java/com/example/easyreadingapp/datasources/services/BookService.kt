@@ -5,6 +5,7 @@ import com.example.easyreadingapp.domain.dtos.AddBookResponse
 import com.example.easyreadingapp.domain.dtos.AuthDto
 import com.example.easyreadingapp.domain.dtos.AuthResponse
 import com.example.easyreadingapp.domain.dtos.Book
+import com.example.easyreadingapp.domain.dtos.ExistsResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,18 +37,11 @@ interface BookService {
         @Query("status") bookStatus: String?
     ): List<Book>
 
-    @GET("users/{user_id}/books/{book_id}/exists")
+    @GET("users/{user_id}/books/")
     suspend fun isBookAddedToUser(
         @Path("user_id") userId: Int,
-        @Path("book_id") bookId: Int
-    ): Response<Boolean>
-
-
-    @PATCH("user/{user_id}/books/{book_id}/favorite")
-    suspend fun addFavorite(
-        @Path("user_id") userId: Int,
-        @Path("book_id") bookId: Int
-    ): Response<Unit>
+        @Query("status") bookStatus: String?
+    ): List<Book>
 
     @GET("books/search/{book_name}")
     suspend fun searchBooksByName(@Path("book_name") bookName: String): List<Book>
@@ -57,5 +51,24 @@ interface BookService {
 
     @GET("books/categories")
     suspend fun getCategories(): List<String>
+
+    @GET("users/{user_id}/books/{book_id}/exists")
+    suspend fun isBookLinkedToUser(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<ExistsResponse>
+
+    @PATCH("user/{user_id}/books/{book_id}/favorite")
+    suspend fun addFavorite(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<Unit>
+
+    @PATCH("user/{user_id}/books/{book_id}/unfavorite")
+    suspend fun removeFavorite(
+        @Path("user_id") userId: Int,
+        @Path("book_id") bookId: Int
+    ): Response<Unit>
+
 }
 
