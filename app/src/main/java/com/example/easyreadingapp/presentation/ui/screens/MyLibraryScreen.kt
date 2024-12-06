@@ -106,7 +106,7 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(favoriteBooks) { book ->
-                            ReadBook(book)
+                            ReadBook(book, navController)
                         }
                     }
                 }
@@ -130,7 +130,7 @@ fun MyLibraryScreen(innerPadding: PaddingValues, navController: NavController) {
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(nonFavoriteBooks) { book ->
-                            ReadBook(book)
+                            ReadBook(book, navController)
                         }
                     }
                 }

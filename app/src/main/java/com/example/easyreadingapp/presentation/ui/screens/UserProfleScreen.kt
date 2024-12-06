@@ -46,6 +46,7 @@ import com.example.easyreadingapp.presentation.components.LoadingScreen
 import com.example.easyreadingapp.presentation.ui.utils.Settings
 import com.example.easyreadingapp.presentation.ui.utils.Exit_to_app
 import com.example.easyreadingapp.presentation.ui.utils.GraphUpArrow
+import com.example.easyreadingapp.presentation.ui.utils.Screens
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -170,8 +171,10 @@ fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navCont
                 Spacer(modifier = Modifier.height(40.dp))
 
                 ButtonOption("Configuración", Color(0xFF4175E1), icon = Settings, onClick = {})
-                Spacer(modifier = Modifier.height(20.dp))
-                ButtonOption("Estadísticas", Color(0xFF4175E1), icon = GraphUpArrow, onClick = {})
+                Spacer(modifier = Modifier.height(20.dp)
+                ButtonOption("Estadísticas", Color(0xFF4CAF50), icon = GraphUpArrow, onClick = {
+                    navController.navigate("stadistics")
+                })
                 Spacer(modifier = Modifier.height(20.dp))
                 ButtonOption(
                     text = "Cerrar Aplicación",

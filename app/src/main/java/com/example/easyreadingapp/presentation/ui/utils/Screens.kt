@@ -7,7 +7,7 @@ sealed class Screens(val route: String) {
     data object Login : Screens("login")
     data object Library : Screens("library")
     data object Stadistics : Screens("stadistics")
-    data object Results : Screens("results")
     data object Profile : Screens("profile")
     data object Register : Screens("register")
+    data object  Pdf : Screens("pdf")
 }
