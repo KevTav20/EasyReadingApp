@@ -17,12 +17,14 @@ fun ReadingStatisticsScreen(innerPadding: PaddingValues) {
     Surface(
         modifier = Modifier.fillMaxSize()
             .padding(innerPadding),
+
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+         
         ) {
             // Título
             Text(
@@ -173,4 +175,3 @@ fun ReadingStatisticsScreen(innerPadding: PaddingValues) {
         }
     }
 }
-
