@@ -24,7 +24,7 @@ fun LoadingScreen() {
 
 
     val painter = rememberAsyncImagePainter(
-        model = "https://imgur.com/mZas4AF.gif",
+        model = "https://i.imgur.com/wf7KJ3z.gif",
         imageLoader = imageLoader
     )
 
