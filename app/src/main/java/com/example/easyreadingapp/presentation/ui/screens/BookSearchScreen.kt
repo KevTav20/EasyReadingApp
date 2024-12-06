@@ -2,17 +2,12 @@ package com.example.easyreadingapp.presentation.ui.screens
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +15,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
@@ -40,13 +34,14 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var categories by remember { mutableStateOf<List<String>>(emptyList()) }
-    var showCategoryDialog by remember { mutableStateOf(false) } // Estado para mostrar el Dialog
     var selectedCategory by remember { mutableStateOf<String?>(null) }
 
     // Configuración de Retrofit
     val retrofit = remember {
-        Retrofit.Builder().baseUrl("http://143.244.179.13/")  // Cambia esto a tu base URL
-            .addConverterFactory(GsonConverterFactory.create()).build()
+        Retrofit.Builder()
+            .baseUrl("http://143.244.179.13/") // Cambia esto a tu base URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
             .create(BookService::class.java)
     }
 
@@ -55,7 +50,7 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
         scope.launch {
             isLoading = true
             try {
-                categories = retrofit.getCategories()  // Llamada para obtener las categorías
+                categories = retrofit.getCategories()
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Error al obtener las categorías: ${e.message}"
@@ -70,80 +65,83 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
         modifier = Modifier
             .padding(innerPadding)
             .padding(16.dp)
-            .fillMaxSize() // Elimina el verticalScroll() aquí
+            .fillMaxSize()
     ) {
         // Barra de búsqueda
-        TextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = { Text("Buscar por nombre de libro") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        )
-
-        Button(
-            onClick = {
-                if (searchText.isNotBlank()) {
-                    scope.launch {
-                        isLoading = true
-                        try {
-                            books = retrofit.searchBooksByName(searchText)
-                            errorMessage = null
-                        } catch (e: Exception) {
-                            errorMessage = "Error al buscar libros: ${e.message}"
-                            books = emptyList()
-                        } finally {
-                            isLoading = false
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = { Text("Buscar libros...") },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            )
+            Button(
+                onClick = {
+                    if (searchText.isNotBlank()) {
+                        scope.launch {
+                            isLoading = true
+                            try {
+                                books = retrofit.searchBooksByName(searchText)
+                                errorMessage = null
+                            } catch (e: Exception) {
+                                errorMessage = "Error al buscar libros: ${e.message}"
+                                books = emptyList()
+                            } finally {
+                                isLoading = false
+                            }
+                            searchText = ""
                         }
-                        searchText = ""
                     }
-                }
-            }, modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text(text = "Buscar por Nombre")
+                },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Text("🔍")
+            }
         }
 
-        // Botón para mostrar categorías
-        Button(
-            onClick = { showCategoryDialog = true }, modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = selectedCategory ?: "Seleccionar Categoría")
-        }
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Dialog para seleccionar una categoría
-        if (showCategoryDialog) {
-            Dialog(onDismissRequest = { showCategoryDialog = false }) {
-                Surface(modifier = Modifier.fillMaxWidth()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2), // Define dos columnas
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(categories) { category ->
-                            Button(
-                                onClick = {
-                                    selectedCategory = category
-                                    showCategoryDialog = false
-                                    scope.launch {
-                                        isLoading = true
-                                        try {
-                                            books = retrofit.getBooksByCategory(category)
-                                            errorMessage = null
-                                        } catch (e: Exception) {
-                                            errorMessage =
-                                                "Error al buscar por categoría: ${e.message}"
-                                            books = emptyList()
-                                        } finally {
-                                            isLoading = false
-                                        }
-                                    }
-                                }, modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                            ) {
-                                Text(text = category)
+        // Categorías en cuadrícula
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            items(categories) { category ->
+                Button(
+                    onClick = {
+                        selectedCategory = category
+                        scope.launch {
+                            isLoading = true
+                            try {
+                                books = retrofit.getBooksByCategory(category)
+                                errorMessage = null
+                            } catch (e: Exception) {
+                                errorMessage = "Error al buscar por categoría: ${e.message}"
+                                books = emptyList()
+                            } finally {
+                                isLoading = false
                             }
                         }
+                    },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .height(80.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Ícono de la categoría (puedes personalizar)
+                        Text(
+                            text = "🔖", // Cambiar por íconos relevantes
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        // Nombre de la categoría
+                        Text(text = category)
                     }
                 }
             }
@@ -172,7 +170,8 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
 
         // Lista de resultados
         LazyColumn(
-            modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(books) { book ->
                 BookCard(book, navController)
