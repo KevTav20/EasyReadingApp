@@ -1,6 +1,7 @@
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -97,13 +98,13 @@ fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navCont
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp)
-                        .background(brush = androidx.compose.ui.graphics.Brush.verticalGradient(gradientColors))
+                        .background(color = Color(0xFF4175E1))
                 ) {
                     Box(
                         modifier = Modifier
                             .size(175.dp)
                             .align(Alignment.BottomCenter)
-                            .offset(y = 50.dp),
+                            .offset(y = 75.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         AsyncImage(
@@ -116,6 +117,7 @@ fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navCont
                                 .size(175.dp)
                                 .clip(CircleShape)
                                 .background(color = Color.Gray, shape = CircleShape)
+                                .border(width = 7.dp, color = Color(0xFF4175E1), shape = CircleShape)
                                 .shadow(10.dp, CircleShape)
                         )
                     }
@@ -168,15 +170,15 @@ fun UserProfileScreen(innerPadding: PaddingValues = PaddingValues(0.dp), navCont
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                ButtonOption("Configuración", Color(0xFF4CAF50), icon = Settings, onClick = {})
-                Spacer(modifier = Modifier.height(20.dp))
+                ButtonOption("Configuración", Color(0xFF4175E1), icon = Settings, onClick = {})
+                Spacer(modifier = Modifier.height(20.dp)
                 ButtonOption("Estadísticas", Color(0xFF4CAF50), icon = GraphUpArrow, onClick = {
                     navController.navigate("stadistics")
                 })
                 Spacer(modifier = Modifier.height(20.dp))
                 ButtonOption(
                     text = "Cerrar Aplicación",
-                    color = Color(0xFFD32F2F),
+                    color = Color(0xFF4175E1),
                     icon = Exit_to_app,
                     onClick = { activity?.finish() }
                 )
