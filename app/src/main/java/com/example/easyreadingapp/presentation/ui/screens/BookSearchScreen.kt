@@ -1,23 +1,28 @@
 package com.example.easyreadingapp.presentation.ui.screens
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.easyreadingapp.R
 import com.example.easyreadingapp.datasources.services.BookService
 import com.example.easyreadingapp.domain.dtos.Book
 import com.example.easyreadingapp.presentation.components.BookCard
@@ -25,6 +30,9 @@ import com.example.easyreadingapp.presentation.components.LoadingScreen
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.layout.padding
 
 @Composable
 fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) {
@@ -35,6 +43,8 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var categories by remember { mutableStateOf<List<String>>(emptyList()) }
     var selectedCategory by remember { mutableStateOf<String?>(null) }
+    var isCategoryDialogVisible by remember { mutableStateOf(false) }
+    var areCategoriesVisible by remember { mutableStateOf(true) }
 
     // Configuración de Retrofit
     val retrofit = remember {
@@ -50,7 +60,7 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
         scope.launch {
             isLoading = true
             try {
-                categories = retrofit.getCategories()
+                categories = listOf("Horror", "Acción", "Drama", "Fantasía", "Romance", "Ficción")
                 errorMessage = null
             } catch (e: Exception) {
                 errorMessage = "Error al obtener las categorías: ${e.message}"
@@ -64,8 +74,13 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
     Column(
         modifier = Modifier
             .padding(innerPadding)
-            .padding(16.dp)
             .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF2193b0), Color(0xFF6dd5ed))
+                )
+            )
+            .padding(16.dp)
     ) {
         // Barra de búsqueda
         Row(
@@ -75,11 +90,17 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
             TextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                placeholder = { Text("Buscar libros...") },
+                placeholder = { Text("Buscar libros...", color = Color.Gray) },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White) // Aplica el fondo blanco directamente
+                    .border(1.dp, Color.Gray, RoundedCornerShape(16.dp)), // Borde gris
+                textStyle = LocalTextStyle.current.copy(color = Color.Black), // Estilo de texto
+                singleLine = true // Evitar que el texto se desborde
             )
+
             Button(
                 onClick = {
                     if (searchText.isNotBlank()) {
@@ -98,52 +119,94 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
                         }
                     }
                 },
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
             ) {
-                Text("🔍")
+                Image(
+                    painter = painterResource(id = R.drawable.ic_search),
+                    contentDescription = "Buscar"
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Categorías en cuadrícula
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            items(categories) { category ->
-                Button(
-                    onClick = {
-                        selectedCategory = category
-                        scope.launch {
-                            isLoading = true
-                            try {
-                                books = retrofit.getBooksByCategory(category)
-                                errorMessage = null
-                            } catch (e: Exception) {
-                                errorMessage = "Error al buscar por categoría: ${e.message}"
-                                books = emptyList()
-                            } finally {
-                                isLoading = false
+        // Botón para buscar por categorías
+        if (areCategoriesVisible) {
+            Button(
+                onClick = { isCategoryDialogVisible = !isCategoryDialogVisible },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(bottom = 16.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF6dd5ed))
+            ) {
+                Text(text = "Buscar por categorías", fontSize = 16.sp, color = Color.White)
+            }
+
+            // Mostrar categorías si está activo
+            if (isCategoryDialogVisible) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(8.dp)
+                ) {
+                    items(categories) { category ->
+                        Button(
+                            onClick = {
+                                selectedCategory = category
+                                areCategoriesVisible = false // Ocultar las categorías al seleccionar
+                                scope.launch {
+                                    isLoading = true
+                                    try {
+                                        books = retrofit.getBooksByCategory(category)
+                                        errorMessage = null
+                                    } catch (e: Exception) {
+                                        errorMessage = "Error al buscar por categoría: ${e.message}"
+                                        books = emptyList()
+                                    } finally {
+                                        isLoading = false
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                // Ícono de la categoría
+                                Image(
+                                    painter = painterResource(id = getCategoryIcon(category)),
+                                    contentDescription = category,
+                                    modifier = Modifier.size(40.dp)
+                                )
+                                // Nombre de la categoría
+                                Text(text = category, fontSize = 20.sp, color = Color.Black)
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        // Ícono de la categoría (puedes personalizar)
-                        Text(
-                            text = "🔖", // Cambiar por íconos relevantes
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        // Nombre de la categoría
-                        Text(text = category)
                     }
                 }
+            }
+        } else {
+            // Botón para reactivar la vista de categorías
+            Button(
+                onClick = { areCategoriesVisible = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(bottom = 16.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF6dd5ed))
+            ) {
+                Text(text = "Mostrar categorías", fontSize = 16.sp, color = Color.White)
             }
         }
 
@@ -163,7 +226,7 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
         errorMessage?.let {
             Text(
                 text = it,
-                color = androidx.compose.ui.graphics.Color.Red,
+                color = Color.Red,
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -177,5 +240,18 @@ fun BookSearchScreen(innerPadding: PaddingValues, navController: NavController) 
                 BookCard(book, navController)
             }
         }
+    }
+}
+
+// Función para obtener el ícono de cada categoría
+fun getCategoryIcon(category: String): Int {
+    return when (category) {
+        "Horror" -> R.drawable.ic_horror
+        "Acción" -> R.drawable.ic_action
+        "Drama" -> R.drawable.ic_drama
+        "Fantasía" -> R.drawable.ic_fantasy
+        "Romance" -> R.drawable.ic_romance
+        "Ficción" -> R.drawable.ic_ficcion
+        else -> R.drawable.ic_category // Ícono por defecto
     }
 }

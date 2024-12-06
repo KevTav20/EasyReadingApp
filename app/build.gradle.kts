@@ -85,6 +85,11 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 //    implementation 'com.canopas.compose-animated-navigationbar:bottombar:1.0.1'
     implementation(libs.bottombar)
+    implementation (libs.ui)// Reemplaza con la versión actual
+    implementation (libs.material3) // Reemplaza con la versión actual
+    implementation (libs.androidx.foundation)
+    implementation (libs.androidx.material)
+    implementation (libs.androidx.runtime.livedata)
     //implementation "com.google.dagger:hilt-android:2.48"
 
     //kapt "com.google.dagger:hilt-compiler:2.48
