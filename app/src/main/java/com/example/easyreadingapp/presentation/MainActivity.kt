@@ -45,6 +45,7 @@ import com.example.easyreadingapp.presentation.ui.screens.BookSearchScreen
 import com.example.easyreadingapp.presentation.ui.screens.HomeScreen
 import com.example.easyreadingapp.presentation.ui.screens.LoginScreen
 import com.example.easyreadingapp.presentation.ui.screens.MyLibraryScreen
+import com.example.easyreadingapp.presentation.ui.screens.PdfViewerScreen
 import com.example.easyreadingapp.presentation.ui.screens.RegisterScreen
 
 import com.example.easyreadingapp.presentation.ui.theme.EasyReadingAppTheme
@@ -171,6 +172,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screens.Library.route) {
                             MyLibraryScreen(innerPadding, navController)
+                        }
+                        composable(route = Screens.Pdf.route){
+                            PdfViewerScreen()
                         }
                     }
                 }

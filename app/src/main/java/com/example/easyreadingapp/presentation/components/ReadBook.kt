@@ -27,17 +27,14 @@ import com.example.easyreadingapp.domain.dtos.Book
 import com.example.easyreadingapp.presentation.ui.utils.Screens
 
 @Composable
-fun ReadBook(book: Book) {
+fun ReadBook(book: Book, navController: NavController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .width(180.dp)
             .clickable {
-                // Navegación al detalle del libro con el bookId
-                // navController.navigate(
-                //     Screens.BookDetail.route
-                //         .replace("{bookId}", book.id.toString())
-                // )
+                navController.navigate(Screens.Pdf.route)
+
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = MaterialTheme.shapes.medium, // Bordes redondeados
