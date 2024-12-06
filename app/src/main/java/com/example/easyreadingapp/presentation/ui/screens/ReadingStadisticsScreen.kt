@@ -21,7 +21,7 @@ fun ReadingStatisticsScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(17.dp)
         ) {
             // Título
             Text(
