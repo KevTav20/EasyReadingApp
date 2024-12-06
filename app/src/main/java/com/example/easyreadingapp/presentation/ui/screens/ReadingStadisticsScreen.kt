@@ -13,9 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ReadingStatisticsScreen() {
+fun ReadingStatisticsScreen(innerPadding: PaddingValues) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(innerPadding),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
@@ -173,8 +174,3 @@ fun ReadingStatisticsScreen() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
-@Composable
-fun ReadingStatisticsScreenPreview() {
-    ReadingStatisticsScreen()
-}
